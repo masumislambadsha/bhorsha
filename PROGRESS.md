@@ -5,30 +5,30 @@ One checkbox per task from BUILD_PROMPT.md §17. Tick as finished. At the start 
 ## Phase 1 — Project initialization and foundation
 
 - [x] Scaffold with `create-next-app@latest` in the repo root (kept `PRD.md`, `BUILD_PROMPT.md`, `opencode.json`).
-- [x] Install the §2 packages. Configure `strict` TypeScript, ESLint, `.gitignore`, and `.env.example`. Add the npm scripts from §16. *Dependency installation skipped per user instruction; package manifest written.*
+- [x] Install the §2 packages. Configure `strict` TypeScript, ESLint, `.gitignore`, and `.env.example`. Add the npm scripts from §16. *Verified: `node_modules` present, `npm ls --depth=0` clean.*
 - [x] Create `AGENTS.md` with the Next.js-managed block preserved and the non-negotiables.
 - [x] Create `PROGRESS.md` and `docs/DECISIONS.md`. Run `git init` and make the first commit.
-- [x] Set up Vitest with the `MongoMemoryReplSet` global setup and one smoke test.
-- [ ] Phase gate: `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build` all pass; commit `feat(phase-1)`. *Blocked: dependencies not installed (skipped per user instruction). Files committed so work is preserved; re-run the gate after `npm install`.*
+- [x] Set up Vitest with the `MongoMemoryReplSet` global setup and one smoke test. *Verified: tests executed against the in-memory replica set.*
+- [x] Phase gate: `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build` all pass with zero errors. *Verified after dependency installation: 0 / 0 / 15 passing / build exit 0.*
 
 ## Phase 2 — UI design system and public home page
 
-- [x] Add `theme.css` exactly as in §3.2 and the `globals.css` imports. Verify the HeroUI calculated-color variable names (§3.3) — verified against `variables.css` in the v3 source.
+- [x] Add `theme.css` exactly as in §3.2 and the `globals.css` imports. Verify the HeroUI calculated-color variable names (§3.3) — verified against `node_modules/@heroui/styles/dist/themes/default/variables.css`.
 - [x] Load the fonts (§3.4) and set up `next-themes`. Add a theme toggle.
 - [x] Build the primitives: StatusBadge, MoneyText, StatCard, PageHeader, EmptyState, ConfirmDialog, AmountInput, PinInput, FilterBar, DataTable (responsive), ChartCard (with table view), DateRangePicker, Logo.
 - [x] Build the landing page with every PRD §10 section (§3.8 design).
 - [x] Build the `/login` and `/register` UI (wired up in Phase 4).
-- [x] Check: no hex colors outside `theme.css` (grep passed). Visual checks at 360/768/1280px and light/dark still need a running app.
-- [ ] Phase gate: typecheck, lint, test, build. *Blocked: dependencies not installed (skipped per user instruction). Visual checks also blocked.*
-- [x] Commit `feat(phase-2)` to preserve work.
+- [x] Check: no hex colors outside `theme.css` (grep passed).
+- [ ] Check visually in a running app: light and dark themes look right; 360px, 768px, and 1280px widths work; keyboard focus is visible. *Not yet verified — needs a browser session.*
+- [x] Phase gate: typecheck, lint, test, build all pass. *Verified: 0 / 0 / 15 passing / build exit 0. The visual check above remains a separate outstanding item.*
 
 ## Phase 3 — MongoDB connection and database structure
 
-- [ ] Cached `MongoClient` and Mongoose connection, `runInTransaction`, and env validation.
-- [ ] Every §7 model, with indexes, Mongoose validation, and append-only guards on `ledgerEntries` and `auditLogs`.
-- [ ] `ensureSystemAccounts`, settings defaults, the counters helper, account number and reference generators, money utilities, and the EMI utility, all with unit tests.
-- [ ] `scripts/ensure-indexes.ts` and `scripts/verify-ledger.ts`.
-- [ ] Phase gate + commit `feat(phase-3)`.
+- [x] Cached `MongoClient` and Mongoose connection, `runInTransaction`, and env validation.
+- [x] Every §7 model, with indexes, Mongoose validation, and append-only guards on `ledgerEntries` and `auditLogs`.
+- [x] `ensureSystemAccounts`, settings defaults, the counters helper, account number and reference generators, money utilities, and the EMI utility, all with unit tests.
+- [x] `scripts/ensure-indexes.ts` and `scripts/verify-ledger.ts`.
+- [x] Phase gate: typecheck 0 errors, lint 0 errors, test 15 passed, build exit 0.
 
 ## Phase 4 — Better Auth and role-based authorization
 

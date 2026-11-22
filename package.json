@@ -10,9 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "seed": "tsx scripts/seed.ts",
-    "ensure-indexes": "tsx scripts/ensure-indexes.ts",
-    "verify:ledger": "tsx scripts/verify-ledger.ts"
+    "seed": "NODE_OPTIONS=--conditions=react-server tsx scripts/seed.ts",
+    "ensure-indexes": "NODE_OPTIONS=--conditions=react-server tsx scripts/ensure-indexes.ts",
+    "verify:ledger": "NODE_OPTIONS=--conditions=react-server tsx scripts/verify-ledger.ts"
   },
   "dependencies": {
     "@heroui/react": "^3",
@@ -48,5 +48,9 @@
     "typescript": "^5",
     "vite-tsconfig-paths": "^6",
     "vitest": "^4"
+  },
+  "allowScripts": {
+    "mongodb-memory-server@11.4.0": true,
+    "esbuild@0.28.2": true
   }
 }
