@@ -42,17 +42,10 @@ One checkbox per task from BUILD_PROMPT.md §17. Tick as finished. At the start 
 
 ## Phase 5 — Redux Toolkit and RTK Query setup
 
-- [ ] Store, provider, typed hooks, `baseApi` with error normalization and tags.
-- [ ] Slices: auth, ui, accounts, transactions, loans. Error middleware and global progress bar.
-- [ ] App shell: sidebar, mobile bottom nav, top bar, notification bell wired to `/api/notifications/unread-count`, user menu with sign-out.
-- [ ] Phase gate + commit `feat(phase-5)`.
-
-## Phase 5 — Redux Toolkit and RTK Query setup
-
-- [ ] Store, provider, typed hooks, `baseApi` with error normalization and tags.
-- [ ] Slices: auth, ui, accounts, transactions, loans. Error middleware and global progress bar.
-- [ ] App shell: sidebar, mobile bottom nav, top bar, notification bell wired to `/api/notifications/unread-count`, user menu with sign-out.
-- [ ] Phase gate + commit `feat(phase-5)`.
+- [x] Store, provider, typed hooks, `baseApi` with error normalization and tags.
+- [x] Slices: auth, ui, accounts, transactions, loans. Error middleware and global progress bar.
+- [x] App shell: sidebar, mobile bottom nav, top bar, notification bell wired to `/api/notifications/unread-count`, user menu with sign-out.
+- [x] Phase gate: typecheck 0 errors, lint 0 errors, 30 tests passing, build exit 0; `verify:ledger` exit 0.
 
 ## Phase 6 — Customer account management
 
