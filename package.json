@@ -1,0 +1,52 @@
+{
+  "name": "bhorsa",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "seed": "tsx scripts/seed.ts",
+    "ensure-indexes": "tsx scripts/ensure-indexes.ts",
+    "verify:ledger": "tsx scripts/verify-ledger.ts"
+  },
+  "dependencies": {
+    "@heroui/react": "^3",
+    "@heroui/styles": "^3",
+    "@hookform/resolvers": "^5",
+    "@reduxjs/toolkit": "^2",
+    "better-auth": "^1.7",
+    "@better-auth/mongo-adapter": "^1.7",
+    "lucide-react": "^0.500",
+    "mongodb": "^6",
+    "mongoose": "^8",
+    "next": "16.4.6",
+    "next-themes": "^0.4",
+    "pdf-lib": "^1.17",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-hook-form": "^7",
+    "react-redux": "^9",
+    "recharts": "^3",
+    "server-only": "^0.0.1",
+    "zod": "^4"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4.3.3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.6",
+    "mongodb-memory-server": "^11",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4",
+    "typescript": "^5",
+    "vite-tsconfig-paths": "^6",
+    "vitest": "^4"
+  }
+}
