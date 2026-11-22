@@ -1,8 +1,11 @@
+import "./load-env";
+import mongoose from "mongoose";
+import { getMongoClientInstance } from "../src/server/db/mongo-client";
 import { connectDB } from "../src/server/db/mongoose";
 import { getServerEnv } from "../src/server/env";
 import { checkLedgerInvariants } from "../src/server/services/integrity";
 
-async function main() {
+async function main(): Promise<number> {
   getServerEnv();
   await connectDB();
   const report = await checkLedgerInvariants();
@@ -13,10 +16,21 @@ async function main() {
     if (check.failures.length > 20) console.log(`      …and ${check.failures.length - 20} more`);
   }
   console.log(report.passed ? "All ledger invariants hold." : "Ledger verification FAILED.");
-  if (!report.passed) process.exitCode = 1;
+  return report.passed ? 0 : 1;
 }
 
-main().catch((error: unknown) => {
-  console.error("Ledger verification could not run:", error);
-  process.exit(1);
-});
+async function closeConnections() {
+  await mongoose.connection.close();
+  await getMongoClientInstance().close();
+}
+
+main()
+  .then(async (code) => {
+    await closeConnections();
+    process.exit(code);
+  })
+  .catch(async (error: unknown) => {
+    console.error("Ledger verification could not run:", error instanceof Error ? error.message : error);
+    await closeConnections().catch(() => undefined);
+    process.exit(1);
+  });

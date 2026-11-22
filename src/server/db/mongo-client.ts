@@ -4,15 +4,24 @@ import { MongoClient } from "mongodb";
 import { getServerEnv } from "@/server/env";
 
 declare global {
-  var __bhorsaMongoClient: Promise<MongoClient> | undefined;
+  var __bhorsaMongoClient: MongoClient | undefined;
 }
 
-/** One native MongoClient for Better Auth, cached across hot reloads. */
-export function getMongoClient(): Promise<MongoClient> {
+/**
+ * Synchronous accessor: creating a MongoClient does not open a socket, so it is
+ * safe to call while constructing Better Auth in either ESM or CJS scripts.
+ * `connect()` is kicked off immediately and is idempotent on the driver.
+ */
+export function getMongoClientInstance(): MongoClient {
   if (!globalThis.__bhorsaMongoClient) {
-    globalThis.__bhorsaMongoClient = new MongoClient(getServerEnv().MONGODB_URI, {
-      maxPoolSize: 10,
-    }).connect();
+    const client = new MongoClient(getServerEnv().MONGODB_URI, { maxPoolSize: 10 });
+    globalThis.__bhorsaMongoClient = client;
+    void client.connect();
   }
   return globalThis.__bhorsaMongoClient;
+}
+
+/** Awaited accessor for code that needs the connection ready before use. */
+export function getMongoClient(): Promise<MongoClient> {
+  return getMongoClientInstance().connect();
 }

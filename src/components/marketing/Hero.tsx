@@ -56,7 +56,7 @@ export function Hero() {
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div>
             <p className="text-sm text-brand-foreground/75">{APP_TAGLINE}</p>
-            <h1 className="mt-3 max-w-xl font-display text-4xl font-medium leading-[1.1] tracking-tight sm:text-5xl lg:text-[64px]">
+            <h1 className="mt-3 max-w-xl font-display text-4xl font-medium leading-[1.1] tracking-tight sm:text-5xl lg:text-[64px] text-white">
               Your money, kept <span className="relative whitespace-nowrap">safe
                 <span aria-hidden="true" className="absolute -bottom-1 left-0 h-[3px] w-full rounded-full bg-accent" />
               </span> and moving.
