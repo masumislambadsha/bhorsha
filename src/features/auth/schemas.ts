@@ -28,3 +28,17 @@ export const registerSchema = z
   });
 
 export type RegisterValues = z.infer<typeof registerSchema>;
+
+export const pinSchema = z.object({
+  pin: z.string({ error: "Enter a 4–6 digit PIN." }).min(4, "Enter a 4–6 digit PIN.").max(6, "Enter a 4–6 digit PIN."),
+});
+
+export const changePinSchema = z.object({
+  currentPin: z.string({ error: "Enter the current PIN." }).min(4).max(6),
+  newPin: z.string({ error: "Enter the new PIN." }).min(4, "Enter a 4–6 digit PIN.").max(6, "Enter a 4–6 digit PIN."),
+});
+
+export const meUpdateProfileSchema = z.object({
+  phone: z.string({ error: "Enter the customer's Bangladesh mobile number." }).regex(/^(\+880|0)?1[3-9]\d{8}$/, "Enter the customer's Bangladesh mobile number.").optional(),
+  address: z.string({ error: "Enter an address." }).max(200).optional(),
+});

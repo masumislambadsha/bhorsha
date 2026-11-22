@@ -1,6 +1,7 @@
 import "./load-env";
 import { ObjectId } from "mongodb";
 import { auth } from "../src/server/auth/auth";
+import { openAccount } from "../src/server/services/accounts";
 import {
   BankAccount,
   BankSettings,
@@ -77,6 +78,7 @@ async function main() {
   await ensureSettings();
   await ensureSystemAccounts();
 
+  const userIds = new Map<string, string>();
   for (const seed of USERS) {
     const result = await auth.api.signUpEmail({
       body: {
@@ -88,6 +90,7 @@ async function main() {
       headers: new Headers(),
     });
     const userId = result.user.id;
+    userIds.set(seed.email, userId);
     const filter = { _id: new ObjectId(userId) };
     await db.collection("user").updateOne(filter, {
       $set: { role: seed.role, banned: false },
@@ -108,6 +111,29 @@ async function main() {
       );
     }
     console.log(`Seeded ${seed.role}: ${seed.email}`);
+  }
+
+  // Accounts: Rahim (savings + current), Nusrat (savings), Arif (savings + business),
+  // Mitu (savings, frozen), Karim and Jannat (none).
+  const seedActor = { id: "seed", role: "admin" as const };
+  const OPEN_ACCOUNTS: Record<string, ("savings" | "current" | "business")[]> = {
+    "customer@bhorsa.demo": ["savings", "current"],
+    "nusrat@bhorsa.demo": ["savings"],
+    "arif@bhorsa.demo": ["savings", "business"],
+    "mitu@bhorsa.demo": ["savings"],
+  };
+  const seededAccounts: Record<string, { accountId: string; type: string }[]> = {};
+  for (const [email, types] of Object.entries(OPEN_ACCOUNTS)) {
+    const customerId = userIds.get(email);
+    if (!customerId) continue;
+    const opened: { accountId: string; type: string }[] = [];
+    for (const type of types) {
+      opened.push({ accountId: await openAccount(seedActor, { customerId, type }), type });
+    }
+    seededAccounts[email] = opened;
+  }
+  for (const account of seededAccounts["mitu@bhorsa.demo"] ?? []) {
+    await BankAccount.updateOne({ _id: account.accountId }, { $set: { status: "frozen", statusReason: "Frozen in demo data.", statusChangedBy: "seed", statusChangedAt: new Date() } });
   }
 
   const report = await checkLedgerInvariants();

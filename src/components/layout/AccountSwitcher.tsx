@@ -11,7 +11,8 @@ import { accountsSlice } from "@/store/slices/accounts";
 export function AccountSwitcher() {
   const dispatch = useAppDispatch();
   const selectedId = useAppSelector((s) => s.accounts.selectedAccountId);
-  const { data: accounts = [] } = useListAccountsQuery(undefined);
+  const { data } = useListAccountsQuery(undefined);
+  const accounts = data?.items ?? [];
   const [open, setOpen] = useState(false);
 
   const selected = accounts.find((a) => a.id === selectedId);

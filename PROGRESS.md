@@ -49,12 +49,20 @@ One checkbox per task from BUILD_PROMPT.md §17. Tick as finished. At the start 
 
 ## Phase 6 — Customer account management
 
-- [ ] Customer services and routes: register by staff, list/search, details, KYC review, status, block/unblock.
-- [ ] Account services and routes: open, list, details, lookup, update, freeze/unfreeze, limits, balance history.
-- [ ] PIN set/change with lockout.
-- [ ] UI: staff/admin customer pages, admin account pages, customer accounts pages with switcher and statement card.
-- [ ] Audit entries and notifications for these actions. Extend the seed with profiles and accounts.
-- [ ] Phase gate + commit `feat(phase-6)`.
+- [x] Customer services and routes: register by staff, list/search, details, KYC review, status, block/unblock.
+- [x] Account services and routes: open, list, details, lookup, update, freeze/unfreeze, limits, balance history.
+- [x] PIN set/change with lockout.
+- [x] UI: staff/admin customer pages, admin account pages, customer accounts pages with switcher and statement card.
+- [x] Audit entries and notifications for these actions. Extend the seed with profiles and accounts.
+- [x] Phase gate: typecheck 0 errors, lint 0 errors, 38 tests passing, build exit 0, `verify:ledger` exit 0; seed rerun against Atlas; ledger invariants hold.
+
+## Phase 7 — Transaction management
+
+- [ ] Ledger service, transfer service (§8.3), held-transfer review (§8.4), risk rules and manual flags (§8.7), reversal.
+- [ ] Transaction list and detail routes with filters, search, pagination; on-screen and PDF receipts.
+- [ ] UI: transfer flow, transaction history, staff/admin transaction pages, review queue, flag resolution.
+- [ ] Integration tests 1–7, 10, and 11 from §13.
+- [ ] Phase gate + commit `feat(phase-7)`.
 
 ## Phase 7 — Transaction management
 

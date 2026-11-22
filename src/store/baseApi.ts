@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery, type BaseQueryFn } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery, type BaseQueryFn, type FetchArgs } from "@reduxjs/toolkit/query/react";
 
 /** Normalized error shape used by components and the global error middleware. */
 export interface ApiError {
@@ -23,7 +23,7 @@ interface ErrorBody {
 const rawQuery = fetchBaseQuery({ baseUrl: "/api" });
 
 /** Wraps fetchBaseQuery: normalizes every error to an {@link ApiError}. */
-export const baseQuery: BaseQueryFn<string, unknown, ApiError> = async (arg, api, extra) => {
+export const baseQuery: BaseQueryFn<string | FetchArgs, unknown, ApiError> = async (arg, api, extra) => {
   const result = await rawQuery(arg, api, extra);
   if (!result.error) return result;
   const data = result.error.data;

@@ -20,3 +20,7 @@ export type TxStatus = (typeof TX_STATUSES)[number];
 export type LoanType = (typeof LOAN_TYPES)[number];
 export type LoanStatus = (typeof LOAN_STATUSES)[number];
 export type AppRole = (typeof APP_ROLES)[number];
+
+export function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
