@@ -1,0 +1,143 @@
+/* Bhorsa theme for HeroUI v3: Petrol (brand), Mist (neutral), Lime (accent).
+   Import after "@heroui/styles" in globals.css and keep it unlayered so it overrides HeroUI defaults. */
+
+:root,
+.light,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Neutrals */
+  --background: #F2F5F4;            /* mist canvas */
+  --foreground: #0F2328;            /* ink */
+  --surface: #FFFFFF;               /* cards */
+  --surface-secondary: #F7F9F8;
+  --surface-tertiary: #EBF0EF;
+  --overlay: #FFFFFF;               /* popovers, modals */
+  --muted: #56676B;                 /* secondary text */
+  --border: #DCE3E1;
+  --separator: #E4EAE8;
+  --default: #E6ECEB;               /* neutral buttons and chips */
+  --default-foreground: #0F2328;
+
+  /* Accent = lime pop (HeroUI primary buttons, selected states) */
+  --accent: #C8F169;
+  --accent-foreground: #0A2E35;     /* petrol ink on lime */
+  --accent-hover: #BBE656;
+  --accent-soft: #EEF9D6;
+  --accent-soft-foreground: #3D5C0C;
+
+  --focus: #0B5563;                 /* petrol focus ring: lime is invisible on white */
+  --link: #0B5563;
+
+  /* Brand = petrol (custom token: sidebar, hero band, balance card) */
+  --brand: #0B5563;
+  --brand-foreground: #F2F5F4;
+  --brand-hover: #094955;
+  --brand-soft: #E1EEEF;
+  --brand-soft-foreground: #0B5563;
+
+  /* Status */
+  --success: #157A42;               --success-foreground: #FFFFFF;
+  --success-soft: #E3F4EA;          --success-soft-foreground: #157A42;
+  --warning: #E89B17;               --warning-foreground: #2B1A00;
+  --warning-soft: #FDF0DC;          --warning-soft-foreground: #9A5200;
+  --danger: #C0362C;                --danger-foreground: #FFFFFF;
+  --danger-soft: #FDE8E6;           --danger-soft-foreground: #B42318;
+  --info: #5B3CC4;                  --info-foreground: #FFFFFF;          /* "under review" */
+  --info-soft: #EEEAFC;             --info-soft-foreground: #5B3CC4;
+  --frozen: #0B6E99;                --frozen-foreground: #FFFFFF;        /* frozen accounts */
+  --frozen-soft: #E0F2FB;           --frozen-soft-foreground: #0B6E99;
+
+  /* Charts, fixed order: deposit, withdrawal, transfer, loan disbursement, loan repayment */
+  --chart-1: #00759A;
+  --chart-2: #CD5630;
+  --chart-3: #7553BD;
+  --chart-4: #669014;
+  --chart-5: #2A61B1;
+}
+
+.dark,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --background: #081417;
+  --foreground: #E6EEEC;
+  --surface: #0F1F23;
+  --surface-secondary: #132629;
+  --surface-tertiary: #183036;
+  --overlay: #132629;
+  --muted: #8FA3A6;
+  --border: #1E3338;
+  --separator: #1A2D31;
+  --default: #1A2E33;
+  --default-foreground: #E6EEEC;
+
+  --accent: #C8F169;
+  --accent-foreground: #0A2E35;
+  --accent-hover: #D4F584;
+  --accent-soft: #1F3318;
+  --accent-soft-foreground: #C8F169;
+
+  --focus: #C8F169;
+  --link: #5CC4CF;
+
+  --brand: #0D3A43;
+  --brand-foreground: #E6EEEC;
+  --brand-hover: #11464F;
+  --brand-soft: #123238;
+  --brand-soft-foreground: #7FD3DC;
+
+  --success: #2FB36A;               --success-foreground: #04210F;
+  --success-soft: #0F2A1C;          --success-soft-foreground: #5BD08A;
+  --warning: #F5B04A;               --warning-foreground: #2B1A00;
+  --warning-soft: #2E2008;          --warning-soft-foreground: #F5B04A;
+  --danger: #F2685E;                --danger-foreground: #2A0503;
+  --danger-soft: #321211;           --danger-soft-foreground: #F97066;
+  --info: #A99BF5;                  --info-foreground: #1A1240;
+  --info-soft: #221B45;             --info-soft-foreground: #A99BF5;
+  --frozen: #5CC3F0;                --frozen-foreground: #04202E;
+  --frozen-soft: #0B2633;           --frozen-soft-foreground: #5CC3F0;
+
+  --chart-1: #0097AB;
+  --chart-2: #C95A37;
+  --chart-3: #886ACF;
+  --chart-4: #6D952C;
+  --chart-5: #407BC5;
+}
+
+/* Bridge tokens into Tailwind utilities: bg-brand, text-info-soft-foreground, fill-chart-1, font-display ... */
+@theme inline {
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-soft-foreground: var(--brand-soft-foreground);
+
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-soft-foreground: var(--accent-soft-foreground);
+  --color-success-soft: var(--success-soft);
+  --color-success-soft-foreground: var(--success-soft-foreground);
+  --color-warning-soft: var(--warning-soft);
+  --color-warning-soft-foreground: var(--warning-soft-foreground);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-soft-foreground: var(--danger-soft-foreground);
+
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-soft: var(--info-soft);
+  --color-info-soft-foreground: var(--info-soft-foreground);
+  --color-frozen: var(--frozen);
+  --color-frozen-foreground: var(--frozen-foreground);
+  --color-frozen-soft: var(--frozen-soft);
+  --color-frozen-soft-foreground: var(--frozen-soft-foreground);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --font-sans: var(--font-plex), var(--font-bengali), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-newsreader), Georgia, serif;
+}

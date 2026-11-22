@@ -13,13 +13,14 @@ One checkbox per task from BUILD_PROMPT.md §17. Tick as finished. At the start 
 
 ## Phase 2 — UI design system and public home page
 
-- [ ] Add `theme.css` exactly as in §3.2 and the `globals.css` imports. Verify the HeroUI calculated-color variable names (§3.3).
-- [ ] Load the fonts (§3.4) and set up `next-themes`. Add a theme toggle.
-- [ ] Build the primitives: StatusBadge, MoneyText, StatCard, PageHeader, EmptyState, ConfirmDialog, AmountInput, PinInput, FilterBar, DataTable (responsive), ChartCard (with table view).
-- [ ] Build the landing page with every PRD §10 section (§3.8 design).
-- [ ] Build the `/login` and `/register` UI (wired up in Phase 4).
-- [ ] Check: light and dark both look right; 360px, 768px, and 1280px widths work; keyboard focus is visible; no hex colors outside `theme.css` (grep).
-- [ ] Phase gate + commit `feat(phase-2)`.
+- [x] Add `theme.css` exactly as in §3.2 and the `globals.css` imports. Verify the HeroUI calculated-color variable names (§3.3) — verified against `variables.css` in the v3 source.
+- [x] Load the fonts (§3.4) and set up `next-themes`. Add a theme toggle.
+- [x] Build the primitives: StatusBadge, MoneyText, StatCard, PageHeader, EmptyState, ConfirmDialog, AmountInput, PinInput, FilterBar, DataTable (responsive), ChartCard (with table view), DateRangePicker, Logo.
+- [x] Build the landing page with every PRD §10 section (§3.8 design).
+- [x] Build the `/login` and `/register` UI (wired up in Phase 4).
+- [x] Check: no hex colors outside `theme.css` (grep passed). Visual checks at 360/768/1280px and light/dark still need a running app.
+- [ ] Phase gate: typecheck, lint, test, build. *Blocked: dependencies not installed (skipped per user instruction). Visual checks also blocked.*
+- [x] Commit `feat(phase-2)` to preserve work.
 
 ## Phase 3 — MongoDB connection and database structure
 
