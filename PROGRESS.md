@@ -32,13 +32,20 @@ One checkbox per task from BUILD_PROMPT.md §17. Tick as finished. At the start 
 
 ## Phase 4 — Better Auth and role-based authorization
 
-- [ ] Better Auth config (§5.3): mongo adapter with client, email/password, admin plugin with ac/roles, escalation guard hook, database hook that creates profiles, rate limiting, `nextCookies` last.
-- [ ] Auth route, auth client, and working login/register/logout with redirects by role.
-- [ ] `proxy.ts` optimistic redirects. Server-side role checks in each role's `layout.tsx`.
-- [ ] `withHandler`, error model, Origin check, guards, rate limiter, and DTO helpers.
-- [ ] First seed pass: create the admin, staff, and customer users.
-- [ ] Tests: 401/403 behavior and the escalation guard.
-- [ ] Phase gate + commit `feat(phase-4)`.
+- [x] Better Auth config (§5.3): mongo adapter with client, email/password, admin plugin with ac/roles, escalation guard hook, database hook that creates profiles, rate limiting, `nextCookies` last.
+- [x] Auth route, auth client, and working login/register/logout with redirects by role.
+- [x] `proxy.ts` optimistic redirects. Server-side role checks in each role's `layout.tsx`.
+- [x] `withHandler`, error model, Origin check, guards, rate limiter, and DTO helpers.
+- [x] First seed pass: create the admin, staff, and customer users.
+- [x] Tests: 401/403 behavior and the escalation guard.
+- [x] Phase gate: typecheck 0 errors, lint 0 errors, test 26 passed, build exit 0; seed ran; ledger invariants hold.
+
+## Phase 5 — Redux Toolkit and RTK Query setup
+
+- [ ] Store, provider, typed hooks, `baseApi` with error normalization and tags.
+- [ ] Slices: auth, ui, accounts, transactions, loans. Error middleware and global progress bar.
+- [ ] App shell: sidebar, mobile bottom nav, top bar, notification bell wired to `/api/notifications/unread-count`, user menu with sign-out.
+- [ ] Phase gate + commit `feat(phase-5)`.
 
 ## Phase 5 — Redux Toolkit and RTK Query setup
 
