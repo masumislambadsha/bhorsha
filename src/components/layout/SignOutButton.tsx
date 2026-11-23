@@ -12,6 +12,7 @@ export function SignOutButton() {
   return (
     <Button
       variant="ghost"
+      className="justify-start text-brand-foreground hover:bg-brand-hover"
       isPending={pending}
       isDisabled={pending}
       onPress={async () => {
