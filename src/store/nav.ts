@@ -40,7 +40,7 @@ export const STAFF_NAV: NavItem[] = [
 
 export const ADMIN_NAV: NavItem[] = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/customers", label: "Customers", icon: Users },
+  { href: "/staff/customers", label: "Customers", icon: Users },
   { href: "/admin/accounts", label: "Accounts", icon: Building2 },
   { href: "/admin/transactions", label: "Activity", icon: Activity },
   { href: "/admin/requests", label: "Requests", icon: FileCheck },
@@ -51,7 +51,7 @@ export const ADMIN_NAV: NavItem[] = [
 
 export const CUSTOMER_PRIMARY = ["/customer", "/customer/transfer", "/customer/transactions", "/customer/loans"];
 export const STAFF_PRIMARY = ["/staff", "/staff/customers", "/staff/queue", "/staff/loans"];
-export const ADMIN_PRIMARY = ["/admin", "/admin/customers", "/admin/accounts", "/admin/transactions"];
+export const ADMIN_PRIMARY = ["/admin", "/staff/customers", "/admin/accounts", "/admin/transactions"];
 
 export const NAV_BY_ROLE = {
   customer: CUSTOMER_NAV,
