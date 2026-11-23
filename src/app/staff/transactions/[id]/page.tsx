@@ -28,8 +28,8 @@ function FlagList({ flags }: { flags: TransactionDto["flags"] }) {
   );
 }
 
-export default function StaffTransactionDetailPage({ params }: { params: Promise<{ idOrReference: string }> }) {
-  const { idOrReference } = use(params);
+export default function StaffTransactionDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: idOrReference } = use(params);
   const { data } = useGetTransactionQuery(idOrReference);
   const [dialog, setDialog] = useState<{ action: "approve" | "reject"; note: string } | null>(null);
   const [flagDialog, setFlagDialog] = useState(false);

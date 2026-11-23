@@ -8,8 +8,8 @@ import { StatusBadge, type StatusKind } from "@/components/ui/StatusBadge";
 import { fromMinor } from "@/lib/money";
 import { formatDateTime } from "@/lib/time";
 
-export default function CustomerTransactionDetailPage({ params }: { params: Promise<{ idOrReference: string }> }) {
-  const { idOrReference } = use(params);
+export default function CustomerTransactionDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: idOrReference } = use(params);
   const { data } = useGetTransactionQuery(idOrReference);
 
   if (!data) return <div className="py-20 text-center text-sm text-muted">Loading…</div>;
