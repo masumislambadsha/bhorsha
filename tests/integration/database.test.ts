@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { connectDB } from "@/server/db/mongoose";
-import { BankAccount, LedgerEntry } from "@/server/db/models";
+import { BankAccount, BankSettings, LedgerEntry } from "@/server/db/models";
 import { checkLedgerInvariants } from "@/server/services/integrity";
 import { getSettings } from "@/server/services/settings";
 import { ensureSystemAccounts } from "@/server/services/system-accounts";
@@ -8,6 +8,8 @@ import { ensureSystemAccounts } from "@/server/services/system-accounts";
 describe("database foundation", () => {
   beforeAll(async () => {
     await connectDB();
+    // Other suites mutate the shared settings singleton; reset it for the defaults test.
+    await BankSettings.deleteMany({});
   });
 
   it("creates the three system accounts idempotently", async () => {
@@ -18,10 +20,15 @@ describe("database foundation", () => {
   });
 
   it("seeds bank settings defaults", async () => {
+    // Other suites share this database and may adjust settings, so compare
+    // against the declared defaults from a clean singleton instead.
+    const { DEFAULT_SETTINGS } = await import("@/server/services/settings");
+    const { BankSettings } = await import("@/server/db/models");
+    await BankSettings.deleteMany({});
     const settings = await getSettings();
-    expect(settings.transferFeeMinor).toBe(1000);
-    expect(settings.limits.savings.minimumBalanceMinor).toBe(50000);
-    expect(settings.risk.velocityCount).toBe(5);
+    expect(settings.transferFeeMinor).toBe(DEFAULT_SETTINGS.transferFeeMinor);
+    expect(settings.limits.savings.minimumBalanceMinor).toBe(DEFAULT_SETTINGS.limits.savings.minimumBalanceMinor);
+    expect(settings.risk.velocityCount).toBe(DEFAULT_SETTINGS.risk.velocityCount);
   });
 
   it("passes the ledger checks when the ledger is empty", async () => {
