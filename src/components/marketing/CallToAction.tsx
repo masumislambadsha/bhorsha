@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export function CallToAction() {
+export function CallToAction({ dashboardHref }: { dashboardHref: string | null }) {
   return (
     <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
       <div className="flex flex-col items-start justify-between gap-6 rounded-3xl bg-brand-soft p-8 sm:flex-row sm:items-center sm:p-12">
@@ -10,7 +10,11 @@ export function CallToAction() {
             Create a customer profile in a minute, or sign in with one of the demo accounts to see each role.
           </p>
         </div>
-        <Link href="/register" className="button button--primary shrink-0">Open an account</Link>
+        {dashboardHref ? (
+          <Link href={dashboardHref} className="button button--primary shrink-0">Go to dashboard</Link>
+        ) : (
+          <Link href="/register" className="button button--primary shrink-0">Open an account</Link>
+        )}
       </div>
     </section>
   );

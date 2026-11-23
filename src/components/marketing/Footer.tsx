@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { APP_NAME, SIMULATION_NOTICE } from "@/config/app";
 
-export function Footer() {
+export function Footer({ dashboardHref }: { dashboardHref: string | null }) {
   return (
     <footer className="border-t border-border bg-surface">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
@@ -14,7 +14,7 @@ export function Footer() {
             <a href="#features" className="text-muted hover:text-foreground">Features</a>
             <a href="#how-it-works" className="text-muted hover:text-foreground">How it works</a>
             <a href="#security" className="text-muted hover:text-foreground">Security</a>
-            <Link href="/login" className="text-muted hover:text-foreground">Sign in</Link>
+            {dashboardHref ? <Link href={dashboardHref} className="text-muted hover:text-foreground">Go to dashboard</Link> : <Link href="/login" className="text-muted hover:text-foreground">Sign in</Link>}
             <Link href="/register" className="text-muted hover:text-foreground">Open account</Link>
           </nav>
         </div>

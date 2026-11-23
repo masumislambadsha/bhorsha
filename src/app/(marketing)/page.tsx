@@ -6,20 +6,23 @@ import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { MarketingNav } from "@/components/marketing/MarketingNav";
 import { ProductHighlights } from "@/components/marketing/ProductHighlights";
 import { Security } from "@/components/marketing/Security";
+import { getServerSession, homeForRole, roleOf } from "@/server/auth/session";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await getServerSession();
+  const dashboardHref = session ? homeForRole(roleOf(session)) : null;
   return (
     <>
-      <MarketingNav />
+      <MarketingNav dashboardHref={dashboardHref} />
       <main id="main">
-        <Hero />
+        <Hero dashboardHref={dashboardHref} />
         <ProductHighlights />
         <CoreFeatures />
         <HowItWorks />
         <Security />
-        <CallToAction />
+        <CallToAction dashboardHref={dashboardHref} />
       </main>
-      <Footer />
+      <Footer dashboardHref={dashboardHref} />
     </>
   );
 }

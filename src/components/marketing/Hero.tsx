@@ -49,7 +49,7 @@ function SampleComposition() {
   );
 }
 
-export function Hero() {
+export function Hero({ dashboardHref }: { dashboardHref: string | null }) {
   return (
     <section className="px-3 pt-4 sm:px-6 sm:pt-6">
       <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-brand px-6 py-12 text-brand-foreground sm:px-10 sm:py-16 lg:px-14">
@@ -65,8 +65,14 @@ export function Hero() {
               Open accounts, send money, request deposits, and manage loans in one simulated bank built to show every step of the process.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/register" className="button button--primary">Open an account</Link>
-              <Link href="/login" className="button button--outline border-brand-foreground/40 text-brand-foreground">Sign in</Link>
+              {dashboardHref ? (
+                <Link href={dashboardHref} className="button button--primary">Go to dashboard</Link>
+              ) : (
+                <>
+                  <Link href="/register" className="button button--primary">Open an account</Link>
+                  <Link href="/login" className="button button--outline border-brand-foreground/40 text-brand-foreground">Sign in</Link>
+                </>
+              )}
             </div>
           </div>
           <SampleComposition />

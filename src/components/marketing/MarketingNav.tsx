@@ -13,7 +13,7 @@ const links = [
   { href: "#security", label: "Security" },
 ];
 
-export function MarketingNav() {
+export function MarketingNav({ dashboardHref }: { dashboardHref: string | null }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -33,12 +33,20 @@ export function MarketingNav() {
 
         <div className="flex items-center gap-1.5">
           <ThemeToggle />
-          <Link href="/login" className="button button--ghost hidden sm:inline-flex">
-            Sign in
-          </Link>
-          <Link href="/register" className="button button--primary">
-            Open account
-          </Link>
+          {dashboardHref ? (
+            <Link href={dashboardHref} className="button button--primary">
+              Go to dashboard
+            </Link>
+          ) : (
+            <>
+              <Link href="/login" className="button button--ghost hidden sm:inline-flex">
+                Sign in
+              </Link>
+              <Link href="/register" className="button button--primary">
+                Open account
+              </Link>
+            </>
+          )}
           <Button
             variant="ghost"
             isIconOnly
@@ -65,9 +73,15 @@ export function MarketingNav() {
                 {link.label}
               </a>
             ))}
-            <Link href="/login" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2.5 text-sm font-medium text-foreground hover:bg-surface-secondary">
-              Sign in
-            </Link>
+            {dashboardHref ? (
+              <Link href={dashboardHref} onClick={() => setOpen(false)} className="rounded-xl px-3 py-2.5 text-sm font-medium text-foreground hover:bg-surface-secondary">
+                Go to dashboard
+              </Link>
+            ) : (
+              <Link href="/login" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2.5 text-sm font-medium text-foreground hover:bg-surface-secondary">
+                Sign in
+              </Link>
+            )}
           </div>
         </div>
       )}
