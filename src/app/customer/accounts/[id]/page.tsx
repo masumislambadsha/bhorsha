@@ -14,6 +14,8 @@ export default function CustomerAccountDetailPage({ params }: { params: Promise<
   const { id } = use(params);
   const { data } = useGetAccountQuery(id);
   const [copied, setCopied] = useState(false);
+  const [today] = useState(() => new Date().toISOString().slice(0, 10));
+  const [monthAgo] = useState(() => new Date(Date.now() - 30 * 86_400_000).toISOString().slice(0, 10));
 
   if (!data) return <div className="py-20 text-center text-sm text-muted">Loading…</div>;
   const account = data;
@@ -50,6 +52,46 @@ export default function CustomerAccountDetailPage({ params }: { params: Promise<
         </dl>
       </div>
       <AccountBalanceChart accountId={id} />
+      <div className="card mt-6 flex flex-wrap items-center justify-between gap-4 p-5">
+        <div>
+          <h2 className="font-display text-lg font-medium">Statements</h2>
+          <p className="mt-1 text-sm text-muted">Download the last 30 days as CSV or PDF. Amounts use BDT.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <a href={`/api/accounts/${id}/statement?from=${monthAgo}&to=${today}&format=csv`} className="rounded-full border border-border px-4 py-2 text-sm">Download CSV</a>
+          <a href={`/api/accounts/${id}/statement?from=${monthAgo}&to=${today}&format=pdf`} className="rounded-full border border-border px-4 py-2 text-sm">Download PDF</a>
+        </div>
+      </div>
+      <StatementDownload accountId={id} />
     </>
+  );
+}
+
+function StatementDownload({ accountId }: { accountId: string }) {
+  const [from, setFrom] = useState(() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() - 1);
+    return d.toISOString().slice(0, 10);
+  });
+  const [to, setTo] = useState(() => new Date().toISOString().slice(0, 10));
+  const url = (format: "csv" | "pdf") =>
+    `/api/accounts/${accountId}/statement?from=${from}&to=${to}&format=${format}`;
+  return (
+    <section className="card mt-6 p-5">
+      <h2 className="font-display text-lg font-medium">Statement</h2>
+      <p className="mt-1 text-sm text-muted">Download an account statement for a period of up to 366 days.</p>
+      <div className="mt-4 flex flex-wrap items-end gap-3">
+        <label className="flex flex-col gap-1.5 text-sm font-medium">
+          From
+          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="rounded-xl border border-border bg-surface px-3 py-2 text-sm" />
+        </label>
+        <label className="flex flex-col gap-1.5 text-sm font-medium">
+          To
+          <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="rounded-xl border border-border bg-surface px-3 py-2 text-sm" />
+        </label>
+        <Button variant="ghost" onPress={() => { window.location.href = url("csv"); }}>Download CSV</Button>
+        <Button variant="ghost" onPress={() => { window.location.href = url("pdf"); }}>Download PDF</Button>
+      </div>
+    </section>
   );
 }
