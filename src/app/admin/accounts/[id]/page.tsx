@@ -18,7 +18,7 @@ import { groupAccountNumber } from "@/lib/mask";
 
 export default function AdminAccountDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { data } = useGetAccountQuery(id);
+  const { data, isError } = useGetAccountQuery(id);
   const [updateAccount, updateAccountResult] = useUpdateAccountMutation();
   const [freeze, freezeResult] = useFreezeAccountMutation();
   const [unfreeze, unfreezeResult] = useUnfreezeAccountMutation();
@@ -30,6 +30,7 @@ export default function AdminAccountDetailPage({ params }: { params: Promise<{ i
   const [daily, setDaily] = useState("");
   const [min, setMin] = useState("");
 
+  if (isError) return <div className="py-20 text-center text-sm text-muted">This account was not found.</div>;
   if (!data) return <div className="py-20 text-center text-sm text-muted">Loading…</div>;
 
   const account = data;
