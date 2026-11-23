@@ -58,19 +58,11 @@ One checkbox per task from BUILD_PROMPT.md §17. Tick as finished. At the start 
 
 ## Phase 7 — Transaction management
 
-- [ ] Ledger service, transfer service (§8.3), held-transfer review (§8.4), risk rules and manual flags (§8.7), reversal.
-- [ ] Transaction list and detail routes with filters, search, pagination; on-screen and PDF receipts.
-- [ ] UI: transfer flow, transaction history, staff/admin transaction pages, review queue, flag resolution.
-- [ ] Integration tests 1–7, 10, and 11 from §13.
-- [ ] Phase gate + commit `feat(phase-7)`.
-
-## Phase 7 — Transaction management
-
-- [ ] Ledger service, transfer service (§8.3), held-transfer review (§8.4), risk rules and manual flags (§8.7), reversal.
-- [ ] Transaction list and detail routes with filters, search, pagination; on-screen and PDF receipts.
-- [ ] UI: transfer flow, transaction history, staff/admin transaction pages, review queue, flag resolution.
-- [ ] Integration tests 1–7, 10, and 11 from §13.
-- [ ] Phase gate + commit `feat(phase-7)`.
+- [x] Ledger service, transfer service (§8.3), held-transfer review (§8.4), risk rules and manual flags (§8.7), reversal.
+- [x] Transaction list and detail routes with filters, search, pagination; on-screen and PDF receipts.
+- [x] UI: transfer flow, transaction history, staff/admin transaction pages, review queue, flag resolution.
+- [x] Integration tests 1–7, 10, and 11 from §13.
+- [x] Phase gate + commit `feat(phase-7)`.
 
 ## Phase 8 — Deposit and withdrawal workflows
 

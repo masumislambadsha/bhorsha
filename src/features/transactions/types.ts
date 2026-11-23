@@ -1,3 +1,16 @@
+export interface TransactionFlagDto {
+  source: string;
+  rule: string | null;
+  severity: string;
+  reason: string;
+  raisedBy: string | null;
+  raisedAt: string;
+  status: string;
+  resolvedBy: string | null;
+  resolvedAt: string | null;
+  resolution: string | null;
+}
+
 export interface TransactionDto {
   id: string;
   reference: string;
@@ -9,4 +22,14 @@ export interface TransactionDto {
   toAccountNumber: string | null;
   description: string | null;
   createdAt: string;
+  review: {
+    required: boolean;
+    reason: string | null;
+    decision: string | null;
+    note: string | null;
+    reviewedBy: string | null;
+    reviewedAt: string | null;
+  };
+  flags: TransactionFlagDto[];
+  flagStatus: string;
 }
