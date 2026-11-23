@@ -13,6 +13,12 @@ const staffActor = { id: "w8-staff", role: "staff" as const };
 const customer = (id: string) => ({ id, role: "customer" as const });
 const actor = customer("w8-cust");
 
+/** Fund an account through an approved deposit so the ledger stays balanced. */
+async function fund(accountId: string, amount: string): Promise<void> {
+  const request = await createRequest(actor, { kind: "deposit", accountId, amount });
+  await approveRequest(adminActor, request.id, { note: "Test funding" });
+}
+
 describe("deposit/withdrawal requests (§8.5, §13.8)", () => {
   let accountId: string;
   let secondAccountId: string;
@@ -22,17 +28,17 @@ describe("deposit/withdrawal requests (§8.5, §13.8)", () => {
     await connectDB();
     await ensureSettings();
     await ensureSystemAccounts();
-    await BankSettings.updateOne({ key: "default" }, { $set: { "risk.velocityCount": 1000 } });
-    await CustomerProfile.insertMany([
-      { userId: "w8-cust", kycStatus: "verified", status: "active" },
-      { userId: "w8-b", kycStatus: "verified", status: "active" },
-    ]);
+    await BankSettings.updateOne({ key: "default" }, { $set: { "risk.velocityCount": 1000, "limits.savings.perTransactionMinor": 70_000_000 } });
+    await CustomerProfile.updateOne({ userId: "w8-cust" }, { $set: { kycStatus: "verified", status: "active" } }, { upsert: true });
     await setPin(actor, "w8-cust", "1234");
+    // Both accounts belong to the same customer so createRequest ownership checks pass.
     accountId = await openAccount(adminActor, { customerId: "w8-cust", type: "savings" });
-    secondAccountId = await openAccount(adminActor, { customerId: "w8-b", type: "savings" });
+    secondAccountId = await openAccount(adminActor, { customerId: "w8-cust", type: "savings" });
     secondAccountNumber = (await BankAccount.findById(secondAccountId).lean())?.accountNumber ?? "";
-    await BankAccount.updateOne({ _id: accountId }, { $set: { balanceMinor: 10_000_000 } }); // ৳100,000
-    await BankAccount.updateOne({ _id: secondAccountId }, { $set: { balanceMinor: 100_000_000 } }); // ৳1,000,000
+    // Raise the per-transaction limit so the 500k/600k approval-limit tests are valid.
+    await BankAccount.updateOne({ _id: secondAccountId }, { $set: { "limits.perTransactionMinor": 100_000_000 } });
+    await fund(accountId, "100000.00");
+    await fund(secondAccountId, "1000000.00");
   });
 
   it("§13.8: creates and approves a deposit request (staff, never the requester)", async () => {
@@ -46,10 +52,10 @@ describe("deposit/withdrawal requests (§8.5, §13.8)", () => {
     expect(after?.balanceMinor).toBe((before?.balanceMinor ?? 0) + 500);
 
     const approvedReq = await DepositWithdrawalRequest.findById(deposit.id).lean();
-    const txn = approvedReq?.transactionId ? await TransactionModel.findOne({ _id: approvedReq.transactionId }).lean() : null;
+    const txn = approvedReq?.transactionId ? await TransactionModel.findById(approvedReq.transactionId).lean() : null;
     expect(txn?.status).toBe("completed");
     expect(txn?.type).toBe("deposit");
-    const entries = await LedgerEntry.find({ transactionId: String(approvedReq?.transactionId) }).lean();
+    const entries = await LedgerEntry.find({ transactionId: approvedReq!.transactionId }).lean();
     expect(entries.length).toBeGreaterThanOrEqual(2);
 
     await expect(approveRequest(actor, deposit.id, {})).rejects.toMatchObject({ code: "FORBIDDEN" });
@@ -57,7 +63,6 @@ describe("deposit/withdrawal requests (§8.5, §13.8)", () => {
 
   it("§13.8: withdrawal request: hold blocks spending; approve converts it", async () => {
     const before = await BankAccount.findById(accountId).lean();
-    // ৳99,500 withdrawal: leaves the account ৳50,500 available, under the ৳50,000 minimum.
     const request = await createRequest(actor, { kind: "withdrawal", accountId, amount: "99500.00" });
     expect(request.status).toBe("pending");
     expect(request.holdMinor).toBe(9_950_000);
@@ -66,7 +71,6 @@ describe("deposit/withdrawal requests (§8.5, §13.8)", () => {
     expect(during?.holdMinor).toBe(9_950_000);
     expect(during?.balanceMinor).toBe(before?.balanceMinor ?? 0);
 
-    // The hold blocks spending: ৳100 to another account is insufficient.
     await expect(
       transfer(actor, { fromAccountId: accountId, toAccountNumber: secondAccountNumber, amount: "100.00", pin: "1234", idempotencyKey: "w8-blocked-1" }),
     ).rejects.toMatchObject({ code: "INSUFFICIENT_FUNDS" });
@@ -77,10 +81,10 @@ describe("deposit/withdrawal requests (§8.5, §13.8)", () => {
     expect(afterApprove?.holdMinor).toBe(0);
     expect(afterApprove?.balanceMinor).toBe(balanceBeforeApprove - 9_950_000);
     const approvedReq = await DepositWithdrawalRequest.findById(request.id).lean();
-    const txn = approvedReq?.transactionId ? await TransactionModel.findOne({ _id: approvedReq.transactionId }).lean() : null;
+    const txn = approvedReq?.transactionId ? await TransactionModel.findById(approvedReq.transactionId).lean() : null;
     expect(txn?.status).toBe("completed");
     expect(txn?.type).toBe("withdrawal");
-    const entries = await LedgerEntry.find({ transactionId: String(request.transactionId) }).lean();
+    const entries = await LedgerEntry.find({ transactionId: approvedReq!.transactionId }).lean();
     expect(entries.length).toBeGreaterThanOrEqual(2);
   });
 
@@ -97,12 +101,10 @@ describe("deposit/withdrawal requests (§8.5, §13.8)", () => {
   });
 
   it("§13.8: enforces per-transaction limit; staff approval limit is enforced, admins can approve above it", async () => {
-    // Withdrawal above the savings per-transaction limit (৳10,00,000).
     await expect(
       createRequest(actor, { kind: "withdrawal", accountId, amount: "1000000.01" }),
     ).rejects.toMatchObject({ code: "LIMIT_PER_TRANSACTION" });
 
-    // Staff approval limit is ৳500,000: ৳600,000 → APPROVAL_LIMIT_EXCEEDED for staff; admin ok.
     const above = await createRequest(actor, { kind: "withdrawal", accountId: secondAccountId, amount: "600000.00" });
     await expect(approveRequest(staffActor, above.id, {})).rejects.toMatchObject({ code: "APPROVAL_LIMIT_EXCEEDED" });
     await approveRequest(adminActor, above.id, {});

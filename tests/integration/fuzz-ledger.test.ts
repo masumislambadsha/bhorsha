@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
-import { BankAccount, BankSettings, CustomerProfile, TransactionModel } from "@/server/db/models";
+import { BankAccount, BankSettings, CustomerProfile, TransactionModel, DepositWithdrawalRequest, Loan } from "@/server/db/models";
 import { connectDB } from "@/server/db/mongoose";
 import { openAccount } from "@/server/services/accounts";
 import { writeLedgerEntries } from "@/server/services/ledger";
@@ -59,6 +59,18 @@ async function seedBalances(accounts: string[]): Promise<void> {
 describe("ledger fuzz (§13.11)", () => {
   it("the ledger invariant checker passes after a random sequence of 200 mixed operations", async () => {
     await connectDB();
+    // Isolate this test from other files sharing the in-memory DB. Append-only
+    // collections are cleared through the native driver.
+    const { getMongoClient } = await import("@/server/db/mongo-client");
+    const db = (await getMongoClient()).db();
+    for (const name of ["bankaccounts", "customerprofiles", "transactions", "depositwithdrawalrequests", "loans", "ledgerentries", "notifications"]) {
+      await db.collection(name).deleteMany({});
+    }
+    await BankAccount.deleteMany({});
+    await CustomerProfile.deleteMany({});
+    await TransactionModel.deleteMany({});
+    await DepositWithdrawalRequest.deleteMany({});
+    await Loan.deleteMany({});
     await ensureSettings();
     await ensureSystemAccounts();
     await BankSettings.updateOne({ key: "default" }, { $set: { "risk.velocityCount": 1000, "risk.oddHoursMinMinor": 0 } });
