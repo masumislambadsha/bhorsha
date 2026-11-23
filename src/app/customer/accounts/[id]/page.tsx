@@ -12,11 +12,12 @@ import { useGetAccountQuery } from "@/features/accounts/api";
 
 export default function CustomerAccountDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { data } = useGetAccountQuery(id);
+  const { data, isError } = useGetAccountQuery(id);
   const [copied, setCopied] = useState(false);
   const [today] = useState(() => new Date().toISOString().slice(0, 10));
   const [monthAgo] = useState(() => new Date(Date.now() - 30 * 86_400_000).toISOString().slice(0, 10));
 
+  if (isError) return <div className="py-20 text-center text-sm text-muted">This account was not found.</div>;
   if (!data) return <div className="py-20 text-center text-sm text-muted">Loading…</div>;
   const account = data;
   const remaining = Math.max(
