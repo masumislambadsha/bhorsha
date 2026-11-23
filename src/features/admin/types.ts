@@ -19,6 +19,10 @@ export interface StaffUser {
   createdAt: string;
 }
 
+export type StaffDto = StaffUser;
+
+export type AuditLogDto = AuditLogEntry;
+
 export interface IntegrityReport {
   passed: boolean;
   checkedAt: string;

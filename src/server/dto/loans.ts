@@ -37,13 +37,13 @@ export function toLoanDto(loan: ILoan): LoanDto {
     })),
     notes: loan.notes.map((n) => ({ authorId: n.authorId, authorRole: n.authorRole, body: n.body, createdAt: n.createdAt.toISOString() })),
     forwarded: loan.forwarded
-      ? { by: loan.forwarded.by, at: loan.forwarded.at.toISOString(), recommendation: loan.forwarded.recommendation, note: loan.forwarded.note }
+      ? { by: loan.forwarded.by, at: loan.forwarded.at ? loan.forwarded.at.toISOString() : "", recommendation: loan.forwarded.recommendation, note: loan.forwarded.note ?? "" }
       : null,
     decision: loan.decision
-      ? { by: loan.decision.by, at: loan.decision.at.toISOString(), ...(loan.decision.reason ? { reason: loan.decision.reason } : {}) }
+      ? { by: loan.decision.by, at: loan.decision.at ? loan.decision.at.toISOString() : "", ...(loan.decision.reason ? { reason: loan.decision.reason } : {}) }
       : null,
     disbursement: loan.disbursement
-      ? { by: loan.disbursement.by, at: loan.disbursement.at.toISOString(), transactionId: String(loan.disbursement.transactionId) }
+      ? { by: loan.disbursement.by, at: loan.disbursement.at ? loan.disbursement.at.toISOString() : "", transactionId: String(loan.disbursement.transactionId) }
       : null,
   };
 }

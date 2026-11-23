@@ -45,10 +45,11 @@ describe("deposit/withdrawal requests (§8.5, §13.8)", () => {
     const after = await BankAccount.findById(accountId).lean();
     expect(after?.balanceMinor).toBe((before?.balanceMinor ?? 0) + 500);
 
-    const txn = await TransactionModel.findOne({ _id: deposit.transactionId }).lean();
+    const approvedReq = await DepositWithdrawalRequest.findById(deposit.id).lean();
+    const txn = approvedReq?.transactionId ? await TransactionModel.findOne({ _id: approvedReq.transactionId }).lean() : null;
     expect(txn?.status).toBe("completed");
     expect(txn?.type).toBe("deposit");
-    const entries = await LedgerEntry.find({ transactionId: String(deposit.transactionId) }).lean();
+    const entries = await LedgerEntry.find({ transactionId: String(approvedReq?.transactionId) }).lean();
     expect(entries.length).toBeGreaterThanOrEqual(2);
 
     await expect(approveRequest(actor, deposit.id, {})).rejects.toMatchObject({ code: "FORBIDDEN" });
