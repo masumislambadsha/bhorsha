@@ -1,81 +1,50 @@
-/** Pure EMI math. All stored amounts are whole paisa. */
+/** Pure, unit-tested loan math (§8.6). */
 
-export interface ScheduleRow {
-  n: number;
-  dueDate: Date;
+export interface InstallmentDraft {
   principalMinor: number;
   interestMinor: number;
   amountDueMinor: number;
 }
 
-export interface EmiPlan {
-  emiMinor: number;
-  totalInterestMinor: number;
-  totalPayableMinor: number;
-  schedule: ScheduleRow[];
+/** Monthly rate r = annualRateBps / 10000 / 12. */
+export function monthlyRate(annualRateBps: number): number {
+  return annualRateBps / 10_000 / 12;
 }
 
-function addMonths(date: Date, months: number): Date {
-  const utc = new Date(date.getTime());
-  const day = utc.getUTCDate();
-  utc.setUTCDate(1);
-  utc.setUTCMonth(utc.getUTCMonth() + months);
-  const lastDay = new Date(Date.UTC(utc.getUTCFullYear(), utc.getUTCMonth() + 1, 0)).getUTCDate();
-  utc.setUTCDate(Math.min(day, lastDay));
-  return utc;
+/** EMI = P·r·(1+r)^n / ((1+r)^n − 1), or P/n when r = 0; rounded to whole paisa. */
+export function emiOf(principalMinor: number, annualRateBps: number, durationMonths: number): number {
+  const r = monthlyRate(annualRateBps);
+  if (r <= 0 || durationMonths <= 0) return Math.round(principalMinor / Math.max(1, durationMonths));
+  const n = durationMonths;
+  const emi = (principalMinor * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+  return Math.round(emi);
 }
 
 /**
- * Amortised schedule. `firstDueDate` is the date of installment 1; the caller
- * passes one month after disbursement.
+ * Build the repayment schedule month by month: `interest = round(balance × r)`,
+ * `principal = emi − interest`; the last installment takes the exact remaining
+ * principal. The principal components sum to P exactly.
  */
-export function calculateEmi(
-  principalMinor: number,
-  annualRateBps: number,
-  durationMonths: number,
-  firstDueDate: Date,
-): EmiPlan {
-  if (!Number.isInteger(principalMinor) || principalMinor <= 0) {
-    throw new Error("Principal must be a positive whole number of paisa.");
-  }
-  if (!Number.isInteger(durationMonths) || durationMonths <= 0) {
-    throw new Error("Duration must be a positive number of months.");
-  }
-
-  const r = annualRateBps / 10000 / 12;
-  const emiMinor =
-    r === 0
-      ? Math.round(principalMinor / durationMonths)
-      : Math.round((principalMinor * r * (1 + r) ** durationMonths) / ((1 + r) ** durationMonths - 1));
-
-  const schedule: ScheduleRow[] = [];
+export function buildSchedule(principalMinor: number, emiMinor: number, durationMonths: number, annualRateBps: number): InstallmentDraft[] {
+  const r = monthlyRate(annualRateBps);
+  const schedule: InstallmentDraft[] = [];
   let balance = principalMinor;
-  let totalInterest = 0;
-
-  for (let n = 1; n <= durationMonths; n += 1) {
-    const interest = Math.round(balance * r);
-    const principal = n === durationMonths ? balance : Math.min(balance, Math.max(1, emiMinor - interest));
-    const actualPrincipal = Math.min(principal, balance);
-    schedule.push({
-      n,
-      dueDate: addMonths(firstDueDate, n - 1),
-      principalMinor: actualPrincipal,
-      interestMinor: interest,
-      amountDueMinor: actualPrincipal + interest,
-    });
-    totalInterest += interest;
-    balance -= actualPrincipal;
+  for (let n = 1; n <= durationMonths; n++) {
+    const interest = r <= 0 ? 0 : Math.round(balance * r);
+    let principal = n === durationMonths ? balance : emiMinor - interest;
+    if (principal > balance) principal = balance;
+    const amountDue = principal + interest;
+    balance -= principal;
+    if (balance < 0) balance = 0;
+    schedule.push({ principalMinor: principal, interestMinor: interest, amountDueMinor: amountDue });
   }
-
-  return {
-    emiMinor,
-    totalInterestMinor: totalInterest,
-    totalPayableMinor: principalMinor + totalInterest,
-    schedule,
-  };
+  return schedule;
 }
 
-/** Remaining principal across unpaid installments; paying this early skips future interest. */
-export function payoffMinor(schedule: ScheduleRow[]): number {
-  return schedule.reduce((sum, row) => sum + row.principalMinor, 0);
+export function sumPrincipals(schedule: InstallmentDraft[]): number {
+  return schedule.reduce((sum, i) => sum + i.principalMinor, 0);
+}
+
+export function sumInterests(schedule: InstallmentDraft[]): number {
+  return schedule.reduce((sum, i) => sum + i.interestMinor, 0);
 }
