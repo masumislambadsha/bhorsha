@@ -42,7 +42,7 @@ export function Sidebar() {
                   aria-current={active ? "page" : undefined}
                   className={`flex items-center gap-3 rounded-lg px-4 py-2.5 ${
                     active
-                      ? "bg-brand-hover border-l-2 border-accent font-medium text-brand"
+                      ? "bg-brand-foreground/15 border-l-2 border-accent font-medium text-brand-foreground"
                       : "text-brand-foreground hover:bg-brand-hover"
                   }`}
                 >

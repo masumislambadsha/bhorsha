@@ -60,16 +60,16 @@
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --background: #081417;
+  --background: #0E1B1F;
   --foreground: #E6EEEC;
-  --surface: #0F1F23;
-  --surface-secondary: #132629;
-  --surface-tertiary: #183036;
-  --overlay: #132629;
+  --surface: #15282D;
+  --surface-secondary: #1B3238;
+  --surface-tertiary: #223E45;
+  --overlay: #1B3238;
   --muted: #8FA3A6;
-  --border: #1E3338;
-  --separator: #1A2D31;
-  --default: #1A2E33;
+  --border: #2F4D54;
+  --separator: #26424A;
+  --default: #22393E;
   --default-foreground: #E6EEEC;
 
   --accent: #C8F169;

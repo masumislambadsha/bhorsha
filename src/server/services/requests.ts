@@ -174,14 +174,14 @@ export async function approveRequest(actor: Actor | null, requestId: string, inp
     const cashId = await systemAccountId("CASH_CLEARING", session);
     if (req.kind === "deposit") {
       const cash = await BankAccount.findOne({ _id: cashId }).lean();
-      await BankAccount.findOneAndUpdate({ _id: cashId, status: "active" }, { $inc: { balanceMinor: req.amountMinor } }, { session, new: true });
+      await BankAccount.findOneAndUpdate({ _id: cashId, status: "active" }, { $inc: { balanceMinor: -req.amountMinor } }, { session, new: true });
       const accountUpdated = await BankAccount.findOneAndUpdate(
         { _id: req.accountId, status: "active" },
         { $inc: { balanceMinor: req.amountMinor } },
         { session, new: true },
       ).lean();
       if (!accountUpdated) throw new AppError("ACCOUNT_NOT_ACTIVE", "The account is not active.");
-      entries.push({ transactionId: txnId, accountId: String(cashId), direction: "debit", amountMinor: req.amountMinor, balanceAfterMinor: (cash?.balanceMinor ?? 0) + req.amountMinor, entryType: "principal" });
+      entries.push({ transactionId: txnId, accountId: String(cashId), direction: "debit", amountMinor: req.amountMinor, balanceAfterMinor: (cash?.balanceMinor ?? 0) - req.amountMinor, entryType: "principal" });
       entries.push({ transactionId: txnId, accountId: String(req.accountId), direction: "credit", amountMinor: req.amountMinor, balanceAfterMinor: accountUpdated.balanceMinor, entryType: "principal" });
     } else {
       const accountUpdated = await BankAccount.findOneAndUpdate(
