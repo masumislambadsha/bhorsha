@@ -10,7 +10,7 @@ import { UserCard } from "./UserCard";
 
 function RoleChip({ role }: { role: AppRole }) {
   return (
-    <span className="rounded-full bg-accent-soft px-3 py-1 text-center text-xs font-medium text-accent-soft-foreground">
+    <span className="rounded-full bg-accent px-3 py-1 text-center text-xs font-medium text-accent-foreground">
       {role}
     </span>
   );
