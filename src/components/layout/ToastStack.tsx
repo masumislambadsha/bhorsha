@@ -7,7 +7,7 @@ const variantClass: Record<ToastVariant, string> = {
   error: "border-danger-soft bg-danger-soft text-danger-soft-foreground",
   warning: "border-warning-soft bg-warning-soft text-warning-soft-foreground",
   success: "border-success-soft bg-success-soft text-success-soft-foreground",
-  info: "border-info-soft bg-info-soft text-info-foreground",
+  info: "border-info-soft bg-info-soft text-info-soft-foreground",
 };
 
 export function ToastStack() {

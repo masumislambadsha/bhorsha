@@ -15,6 +15,8 @@ export interface Toast {
 }
 
 let toasts: Toast[] = [];
+// Stable empty list for server rendering (getServerSnapshot must return the same value).
+const NO_TOASTS: Toast[] = [];
 const listeners = new Set<() => void>();
 let nextId = 0;
 
@@ -40,5 +42,5 @@ export function useToasts(): Toast[] {
       listeners.delete(onChange);
     };
   };
-  return useSyncExternalStore(subscribe, () => toasts);
+  return useSyncExternalStore(subscribe, () => toasts, () => NO_TOASTS);
 }
