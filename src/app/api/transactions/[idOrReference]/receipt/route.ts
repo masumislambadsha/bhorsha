@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { AuthUser, BankAccount } from "@/server/db/models";
+import { findAuthUserById } from "@/server/db/models/user";
 import { withHandler } from "@/server/http/handler";
 import { buildReceiptPdf } from "@/server/pdf/receipt";
 import { maskName } from "@/server/services/accounts";
@@ -12,8 +13,8 @@ export const GET = withHandler(
 
     const senderDoc = doc.fromAccountNumber ? await BankAccount.findOne({ accountNumber: doc.fromAccountNumber }).select("ownerId").lean() : null;
     const receiverDoc = doc.toAccountNumber ? await BankAccount.findOne({ accountNumber: doc.toAccountNumber }).select("ownerId").lean() : null;
-    const sender = senderDoc?.ownerId ? await AuthUser.findOne({ _id: senderDoc.ownerId }).lean() : null;
-    const receiver = receiverDoc?.ownerId ? await AuthUser.findOne({ _id: receiverDoc.ownerId }).lean() : null;
+    const sender = senderDoc?.ownerId ? await findAuthUserById(String(senderDoc.ownerId)) : null;
+    const receiver = receiverDoc?.ownerId ? await findAuthUserById(String(receiverDoc.ownerId)) : null;
 
     const pdf = await buildReceiptPdf(
       doc,

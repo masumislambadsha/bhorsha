@@ -20,15 +20,14 @@ export function Sidebar() {
   const role = useAppSelector((s) => s.auth.user?.role ?? "customer");
   const pathname = usePathname();
   const nav = role === "staff" ? STAFF_NAV : role === "admin" ? ADMIN_NAV : CUSTOMER_NAV;
-  const home = role === "staff" ? "/staff" : role === "admin" ? "/admin" : "/customer";
-
+  
   return (
     <nav
       aria-label="Main navigation"
       className="fixed left-0 top-0 z-20 hidden md:flex h-dvh w-[264px] flex-col justify-between border-r border-brand bg-brand px-4 py-6 md:w-14 lg:w-[264px]"
     >
       <div className="flex flex-col gap-6">
-        <Link href={home} className="flex items-center justify-center px-3">
+        <Link href={'/'} className="flex items-center justify-center px-3">
           <Logo compact />
         </Link>
         <RoleChip role={role} />

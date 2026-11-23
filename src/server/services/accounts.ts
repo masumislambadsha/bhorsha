@@ -4,6 +4,7 @@ import type { AccountType } from "@/lib/domain";
 import type { Actor } from "@/server/auth/guards";
 import { assertRole } from "@/server/auth/guards";
 import { AuthUser, BankAccount, CustomerProfile, LedgerEntry } from "@/server/db/models";
+import { findAuthUserById } from "@/server/db/models/user";
 import type { AccountDto, AccountStatus } from "@/features/accounts/types";
 import { escapeRegExp } from "@/lib/domain";
 import type { Page } from "@/server/http/pagination";
@@ -122,7 +123,7 @@ export interface AccountLookup {
 export async function lookupAccount(actor: Actor | null, accountNumber: string): Promise<AccountLookup> {
   const doc = await BankAccount.findOne({ kind: "customer", accountNumber }).lean();
   if (!doc) throw new AppError("NOT_FOUND", "No active account has that number. Check it and try again.");
-  const owner = doc.ownerId ? await AuthUser.findOne({ _id: doc.ownerId }).lean() : null;
+  const owner = doc.ownerId ? await findAuthUserById(String(doc.ownerId)) : null;
   return {
     maskedName: owner?.name ? maskName(owner.name) : "Unknown",
     accountType: doc.type,

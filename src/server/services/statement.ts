@@ -1,6 +1,7 @@
 import "server-only";
 
 import { BankAccount, AuthUser, LedgerEntry, TransactionModel } from "@/server/db/models";
+import { findAuthUserById } from "@/server/db/models/user";
 import { AppError } from "@/server/http/errors";
 import { fromMinor } from "@/lib/money";
 import { formatDate } from "@/lib/time";
@@ -84,7 +85,7 @@ export async function buildStatement(
     };
   });
 
-  const customer = account.ownerId ? await AuthUser.findById(account.ownerId).select("name").lean() : null;
+  const customer = account.ownerId ? await findAuthUserById(String(account.ownerId)) : null;
   return {
     account: { number: account.accountNumber, type: account.type, nickname: account.nickname ?? "" },
     customerName: customer?.name ?? "",

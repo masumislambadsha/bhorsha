@@ -7,6 +7,7 @@ import type { Actor } from "@/server/auth/guards";
 import { assertRole } from "@/server/auth/guards";
 import { auth } from "@/server/auth/auth";
 import { AuthUser, BankAccount, CustomerProfile, TransactionModel, Loan } from "@/server/db/models";
+import { findAuthUserById } from "@/server/db/models/user";
 import { AppError } from "@/server/http/errors";
 import { paginate, type Page } from "@/server/http/pagination";
 import { toCustomerDto } from "@/server/dto/customers";
@@ -61,7 +62,7 @@ export async function listCustomers(actor: Actor | null, filters: CustomerListFi
   const pageIds = ids.slice((filters.page - 1) * filters.pageSize, filters.page * filters.pageSize);
   const items: CustomerDto[] = [];
   for (const id of pageIds) {
-    const user = await AuthUser.findOne({ _id: id }).lean();
+    const user = await findAuthUserById(String(id));
     const profile = await CustomerProfile.findOne({ userId: id }).lean();
     if (user && profile) items.push(toCustomerDto(user, profile));
   }
@@ -70,7 +71,7 @@ export async function listCustomers(actor: Actor | null, filters: CustomerListFi
 
 export async function getCustomer(actor: Actor | null, customerId: string): Promise<CustomerDetail> {
   assertRole(actor, ["staff", "admin"]);
-  const user = await AuthUser.findOne({ _id: customerId }).lean();
+  const user = await findAuthUserById(String(customerId));
   const profile = await CustomerProfile.findOne({ userId: customerId }).lean();
   if (!user || !profile) throw new AppError("NOT_FOUND", "Customer not found.");
   const accounts = (await BankAccount.find({ kind: "customer", ownerId: customerId }).sort({ createdAt: -1 }).lean()).map(toAccountDto);
@@ -134,7 +135,7 @@ export async function setCustomerStatus(actor: Actor | null, customerId: string,
 
 export async function blockCustomer(actor: Actor | null, customerId: string, input: { reason: string; freezeAccounts?: boolean }, headers: Headers): Promise<void> {
   assertRole(actor, ["admin"]);
-  const user = await AuthUser.findOne({ _id: customerId }).lean();
+  const user = await findAuthUserById(String(customerId));
   if (!user) throw new AppError("NOT_FOUND", "Customer not found.");
   await auth.api.banUser({ body: { userId: customerId, banReason: input.reason }, headers });
   const freeze = input.freezeAccounts !== false;
@@ -156,7 +157,7 @@ export async function blockCustomer(actor: Actor | null, customerId: string, inp
 
 export async function unblockCustomer(actor: Actor | null, customerId: string, headers: Headers): Promise<void> {
   assertRole(actor, ["admin"]);
-  const user = await AuthUser.findOne({ _id: customerId }).lean();
+  const user = await findAuthUserById(String(customerId));
   if (!user) throw new AppError("NOT_FOUND", "Customer not found.");
   await auth.api.unbanUser({ body: { userId: customerId }, headers });
   await writeAuditLog(actor, { action: "CUSTOMER_UNBLOCKED", entityType: "customer", entityId: customerId, summary: "Customer unblocked." });
