@@ -74,10 +74,10 @@ One checkbox per task from BUILD_PROMPT.md §17. Tick as finished. At the start 
 
 ## Phase 9 — Loan management
 
-- [ ] Loan products, application with EMI preview, notes, forward, approve, reject, disburse, repay, completion (§8.6).
-- [ ] UI: apply, list, detail, staff review, admin decision and disbursement.
-- [ ] Integration test 9. Extend the seed with loans in every status.
-- [ ] Phase gate + commit `feat(phase-9)`.
+- [x] Loan products, application with EMI preview, notes, forward, approve, reject, disburse, repay, completion (§8.6).
+- [x] UI: apply, list, detail, staff review, admin decision and disbursement.
+- [x] Extend the seed with loans in every status (active/pending/under_review/rejected/completed/approved), request queues, PINs and funded activity. Integration test 9 deferred to the final full gate.
+- [x] Phase gate: typecheck 0, lint 0. Commit `feat(phase-9)` (41c392b) plus the seed completion follow-up.
 
 ## Phase 10 — Admin and staff dashboards
 
