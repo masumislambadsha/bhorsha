@@ -76,7 +76,8 @@ describe("deposit/withdrawal requests (§8.5, §13.8)", () => {
     const afterApprove = await BankAccount.findById(accountId).lean();
     expect(afterApprove?.holdMinor).toBe(0);
     expect(afterApprove?.balanceMinor).toBe(balanceBeforeApprove - 9_950_000);
-    const txn = await TransactionModel.findOne({ _id: request.transactionId }).lean();
+    const approvedReq = await DepositWithdrawalRequest.findById(request.id).lean();
+    const txn = approvedReq?.transactionId ? await TransactionModel.findOne({ _id: approvedReq.transactionId }).lean() : null;
     expect(txn?.status).toBe("completed");
     expect(txn?.type).toBe("withdrawal");
     const entries = await LedgerEntry.find({ transactionId: String(request.transactionId) }).lean();
